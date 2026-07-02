@@ -26,6 +26,8 @@ from douyin_to_text import (
     write_outputs,
 )
 
+DEFAULT_OUTPUT_DIR_JS = str(DEFAULT_OUTPUT_DIR).replace("\\", "\\\\")
+
 
 HTML = r"""<!doctype html>
 <html lang="zh-CN">
@@ -273,7 +275,7 @@ HTML = r"""<!doctype html>
         </div>
         <div>
           <label for="output_dir">保存到</label>
-          <div class="dir-row"><input id="output_dir" value="D:\DouyinTranscripts" /></div>
+          <div class="dir-row"><input id="output_dir" value="__DEFAULT_OUTPUT_DIR__" /></div>
         </div>
       </div>
 
@@ -435,7 +437,7 @@ HTML = r"""<!doctype html>
           body: JSON.stringify({
             urls: urls,
             cookies: cookies.value,
-            output_dir: outputDir.value.trim() || "D:\\DouyinTranscripts"
+            output_dir: outputDir.value.trim() || "__DEFAULT_OUTPUT_DIR__"
           })
         });
 
@@ -485,6 +487,8 @@ HTML = r"""<!doctype html>
 </body>
 </html>
 """
+
+HTML = HTML.replace("__DEFAULT_OUTPUT_DIR__", DEFAULT_OUTPUT_DIR_JS)
 
 
 class Handler(BaseHTTPRequestHandler):
