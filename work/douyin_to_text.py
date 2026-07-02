@@ -127,7 +127,6 @@ def _download_once(url: str, out_dir: Path, cookie_browser: str | None, on_progr
     if cookie_browser:
         ydl_opts["cookiesfrombrowser"] = (cookie_browser,)
     else:
-        # Auto-detect cookies.txt (yt-dlp native format, no browser dependency)
         for _cf in [DEFAULT_OUTPUT_DIR / "cookies.txt", Path("cookies.txt")]:
             if _cf.exists():
                 ydl_opts["cookiefile"] = str(_cf)
@@ -192,13 +191,11 @@ def _download_from_mobile_share_page(url: str, out_dir: Path, on_progress=None) 
         raise RuntimeError("Mobile share page did not contain a playable video URL")
 
     play_url = json.loads(f'"{play_match.group(1)}"')
-    # Non-watermarked version
     play_url = play_url.replace("/playwm/", "/play/")
 
     if on_progress:
         on_progress(0, "下载中 0%")
 
-    # Disable SSL verification — aweme.snssdk.com cert chain is not trusted by certifi
     media = requests.get(play_url, headers=headers, stream=True, timeout=120, verify=False)
     media.raise_for_status()
 
@@ -249,7 +246,6 @@ def download_video(url: str, out_dir: Path, cookie_browser: str = "auto", on_pro
 
 
 def preload_model(model_name: str = DEFAULT_MODEL) -> None:
-    """Pre-load a Whisper model into the cache (call at startup)."""
     import whisper
     import torch
     device = "cuda" if torch.cuda.is_available() else "cpu"
